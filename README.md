@@ -42,7 +42,7 @@ This starts the Celery worker in the background and the Django dev server at `ht
 make test
 ```
 
-Runs all 17 tests across both apps (orders + notifications).
+Runs all 23 tests across both apps (orders + notifications).
 
 ### Step 5 — Stop background services
 
@@ -51,6 +51,47 @@ make stop
 ```
 
 Kills the background Celery worker.
+
+---
+
+## Demonstrating the Queue & Rate Limiter (As Shown in the Video)
+
+To run the queue and rate limiter in the foreground (useful for recording a screen demo or watching logs in real-time), open a terminal layout with multiple panes and run:
+
+1. **Terminal Pane 1: Start Redis**
+   ```bash
+   # Option A (via Docker):
+   docker run -it -p 6379:6379 --name artikate-redis redis
+   
+   # Option B (local redis-server):
+   redis-server
+   ```
+
+2. **Terminal Pane 2: Start Django**
+   ```bash
+   source venv/bin/activate
+   python manage.py runserver
+   ```
+
+3. **Terminal Pane 3: Start Celery worker in the foreground**
+   ```bash
+   source venv/bin/activate
+   celery -A config worker -l info
+   ```
+
+4. **Terminal Pane 4: Monitor Redis in Real-Time (Optional)**
+   To see rate limiter sorted set commands streaming:
+   ```bash
+   redis-cli monitor
+   # Note: For Docker setups, run: docker exec -it artikate-redis redis-cli monitor
+   ```
+
+5. **Terminal Pane 5: Submit the Demo Jobs**
+   Trigger the submission of 250 jobs (249 success, 1 failure to show backoff):
+   ```bash
+   source venv/bin/activate
+   python submit_jobs.py
+   ```
 
 ---
 
