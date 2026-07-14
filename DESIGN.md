@@ -20,6 +20,8 @@
 
 I'm using Redis as the broker because we already need Redis for the rate limiter. No point adding a second piece of infrastructure like RabbitMQ. RabbitMQ is better for guaranteed delivery, but Redis with `acks_late=True` is good enough here.
 
+![Overall Job Queue Architecture](docs/diagrams/job_queue_architecture.png)
+
 ---
 
 ## Rate Limiter Design
@@ -41,6 +43,8 @@ I looked at three common rate limiting approaches:
 2. **It's easy to understand.** One Redis sorted set. Timestamps as scores. `ZREMRANGEBYSCORE` to remove old entries, `ZCARD` to count what's left, `ZADD` to add a new one. Three commands, straightforward logic.
 
 3. **Memory isn't an issue.** With a 200/min limit, the sorted set has at most 200 entries. Each entry is about 50 bytes. That's roughly 10KB — Redis won't even notice.
+
+![Rate Limiter Flow](docs/diagrams/rate_limiter_flow.png)
 
 ### How Atomicity Is Guaranteed
 
@@ -86,5 +90,7 @@ The key settings that make things reliable:
 | `acks_late` | `True` | The worker only tells Redis "I'm done" after the task finishes. If the worker dies mid-task, Redis still has the message and will give it to another worker. |
 | `reject_on_worker_lost` | `True` | If a worker process gets killed (like `kill -9`), the message gets put back in the queue instead of being lost. |
 | `max_retries` | `5` | Retries with exponential backoff: 10s → 20s → 40s → 80s → 160s (about 5 minutes of total retry time). |
+
+![SIGKILL Recovery Flow](docs/diagrams/sigkill_recovery_flow.png)
 
 See `ANSWERS.md` (Section 2) for a more detailed writeup on what happens when a worker gets SIGKILL'd.
