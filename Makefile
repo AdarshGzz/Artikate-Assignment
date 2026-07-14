@@ -1,9 +1,9 @@
 .PHONY: setup run test stop seed clean
 
-# ============================================
+# ----------------------------------------------------
 # Artikate Studio Backend Assessment
 # One-command automation for setup, run, and test
-# ============================================
+# ----------------------------------------------------
 
 VENV = venv
 PYTHON = $(VENV)/bin/python
