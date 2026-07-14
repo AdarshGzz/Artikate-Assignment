@@ -28,7 +28,8 @@ def send_notification(request):
     if not to_email:
         return JsonResponse({'error': 'Missing "to" field'}, status=400)
 
-    result = send_email_notification.delay(to_email, subject, message)
+    force_fail = body.get('force_fail', False)
+    result = send_email_notification.delay(to_email, subject, message, force_fail=force_fail)
 
     return JsonResponse({
         'status': 'queued',
