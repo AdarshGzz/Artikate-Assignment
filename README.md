@@ -4,6 +4,13 @@ Django backend assessment covering N+1 query diagnosis, rate-limited async job q
 
 ---
 
+## ★ Live System Recording (Bonus)
+
+A screen recording demonstrating the Celery queue implementation, Redis state, rate limiter throttling (limiting to <= 200 emails/minute), and retry mechanism with backoff:
+- **[Live System Recording (Google Drive)](https://drive.google.com/file/d/1N6X3df12g8yVRHiTDwwGTED1ksdUGgAm/view)**
+
+---
+
 ## Quick Start
 
 ### Prerequisites
